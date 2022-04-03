@@ -1,0 +1,166 @@
+--
+-- For an Arduino Software (IDE) managed board, such as Arduino UNO, Arduino Mega and NodeMCU.
+--
+ARDUINO-MIB DEFINITIONS ::= BEGIN
+	IMPORTS
+		MODULE-IDENTITY,
+		OBJECT-TYPE,
+		NOTIFICATION-TYPE,
+		enterprises,
+		experimental
+		Integer32,
+		Unsigned32,
+		Counter32,
+		Counter64,
+		Gauge32,
+		IpAddress,
+		TimeTicks
+			FROM SNMPv2-SMI
+
+		OBJECT-GROUP
+			FROM SNMPv2-CONF
+
+		DisplayString,
+		RowStatus,
+		TruthValue
+			FROM SNMPv2-TC
+
+		-- User-specified Imports
+		arduino
+			FROM ARMADINO-MIB;
+
+-- Digital Input Table
+
+	digitalInputStatusTable OBJECT-TYPE
+		SYNTAX SEQUENCE OF DigitalInputStatusEntry
+		ACCESS read-write
+		STATUS mandatory
+		DESCRIPTION
+			"A table listing digital pins that are designated for input."
+		::= { arduino 1 }
+
+	digitalInputStatusEntry OBJECT-TYPE
+		SYNTAX DigitalInputStatusEntry
+		ACCESS read-write
+   		STATUS mandatory
+   		DESCRIPTION
+   			"A row containing information about one digital input."
+   		INDEX { digitalInputId }
+   		::= { digitalInputStatusTable 1 }
+
+	DigitalInputStatusEntry ::= SEQUENCE {
+		digitalInputId INTEGER (0..31),
+		digitalInputValue INTEGER (0..3)
+	}
+
+	digitalInputId OBJECT-TYPE
+		SYNTAX INTEGER (0..31)
+		ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION
+			"The Id (index) of the digital input."
+      		::= { digitalInputStatusEntry 1 }
+
+	digitalInputValue OBJECT-TYPE
+		SYNTAX INTEGER { off(0), on(1), error(2) }
+		ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION
+			"The status (value) of the digital input."
+      		::= { digitalInputStatusEntry 2 }
+
+-- Digital Output Table
+
+	digitalOutputStatusTable OBJECT-TYPE
+		SYNTAX SEQUENCE OF DigitalOutputStatusEntry
+		ACCESS read-write
+		STATUS mandatory
+		DESCRIPTION
+			"A table listing digital pins that are designated for output."
+		::= { arduino 2 }
+
+	digitalOutputStatusEntry OBJECT-TYPE
+		SYNTAX DigitalOutputStatusEntry
+		ACCESS read-write
+   		STATUS mandatory
+   		DESCRIPTION
+   			"A row containing information about one digital output."
+   		INDEX { digitalOutputId }
+   		::= { digitalOutputStatusTable 1 }
+
+	DigitalOutputStatusEntry ::= SEQUENCE {
+		digitalOutputId INTEGER (0..31),
+		digitalOutputValue INTEGER (0..3)
+	}
+
+	digitalOutputId OBJECT-TYPE
+		SYNTAX INTEGER (0..31)
+		ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION
+			"The Id (index) of the digital output."
+      		::= { digitalOutputStatusEntry 1 }
+
+	digitalOutputValue OBJECT-TYPE
+		SYNTAX INTEGER { off(0), on(1), error(2) }
+		ACCESS read-write
+		STATUS mandatory
+		DESCRIPTION
+			"The status (value) of the digital output."
+      		::= { digitalOutputStatusEntry 2 }
+
+-- Analog Input Table
+
+   	analogInputStatusTable OBJECT-TYPE
+		SYNTAX SEQUENCE OF AnalogInputStatusEntry
+		ACCESS read-write
+		STATUS mandatory
+		DESCRIPTION
+			"A table listing analog inputs."
+		::= { arduino 3 }
+
+	analogInputStatusEntry OBJECT-TYPE
+		SYNTAX AnalogInputStatusEntry
+		ACCESS read-write
+   		STATUS mandatory
+   		DESCRIPTION
+   			"A row containing information about one analog input."
+   		INDEX { analogInputId }
+   		::= { analogInputStatusTable 1 }
+
+	AnalogInputStatusEntry ::= SEQUENCE {
+		analogInputId INTEGER (0..15),
+		analogInputValue Gauge32
+		}
+
+	analogInputId OBJECT-TYPE
+		SYNTAX INTEGER (0..15)
+		ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION
+			"The Id of the analog input."
+      		::= { analogInputStatusEntry 1 }
+
+	analogInputValue OBJECT-TYPE
+		SYNTAX Gauge32
+		ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION
+			"The value of the analog input."
+      		::= { analogInputStatusEntry 2 }
+
+-- TRAP Definitions
+
+	digitalInput-ON TRAP-TYPE
+		ENTERPRISE arduino
+		VARIABLES { digitalInputId }
+		DESCRIPTION "Digital input deactivated"
+		::= 1
+
+	digitalInput-OFF TRAP-TYPE
+		ENTERPRISE arduino
+		VARIABLES { digitalInputId }
+		DESCRIPTION "Digital input activated"
+		::= 2
+
+END

@@ -1,0 +1,19 @@
+#
+# Embarcadero C/C++ compiler Makefile for uSNMP library
+#
+
+CC = bcc32c
+CFLAGS =
+INCLUDE =      
+LIBS = 
+RM = erase
+AGT_OBJS = wingetopt.obj endian.obj misc.obj timer.obj list.obj oid.obj octet.obj mib.obj miblist.obj varbind.obj mibutil.obj SnmpAgent.obj
+MGR_OBJS = wingetopt.obj endian.obj misc.obj oid.obj octet.obj mib.obj miblist.obj varbind.obj mibutil.obj SnmpMgr.obj
+
+all: $(AGT_OBJS) $(MGR_OBJS) keylist.obj 
+
+.c.obj:
+	$(CC) $(CFLAGS) $(INCLUDE) -c $<
+
+clean:  
+	$(RM) *.obj *.o *.tds *.map *.exe

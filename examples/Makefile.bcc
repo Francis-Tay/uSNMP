@@ -1,0 +1,44 @@
+#
+# Embarcadero C/C++ compiler Makefile for uSNMP examples
+#
+
+CC = bcc32c
+CFLAGS =
+INCLUDE = -I..\src
+LIBS = 
+RM = erase
+AGT_OBJS = ..\src\wingetopt.obj ..\src\endian.obj ..\src\misc.obj ..\src\timer.obj ..\src\list.obj ..\src\oid.obj ..\src\octet.obj ..\src\mib.obj ..\src\miblist.obj ..\src\varbind.obj ..\src\mibutil.obj ..\src\SnmpAgent.obj
+MGR_OBJS = ..\src\wingetopt.obj ..\src\endian.obj ..\src\misc.obj ..\src\list.obj ..\src\oid.obj ..\src\octet.obj ..\src\mib.obj ..\src\miblist.obj ..\src\varbind.obj ..\src\mibutil.obj ..\src\SnmpMgr.obj
+
+USNMPD = usnmpd.obj ..\src\keylist.obj $(AGT_OBJS)
+USNMPTRAP = usnmptrap.obj $(AGT_OBJS)
+USNMPGET = usnmpget.obj $(MGR_OBJS)
+USNMPGETNEXT = usnmpgetnext.obj $(MGR_OBJS)
+USNMPSET = usnmpset.obj $(MGR_OBJS)
+USNMPTRAPD = usnmptrapd.obj $(MGR_OBJS)
+
+all: usnmpd usnmptrap usnmpget usnmpgetnext usnmpset usnmptrap usnmptrapd 
+
+usnmpd: $(USNMPD)                                        
+	$(CC) $(CFLAGS) $(INCLUDE) -o usnmpd.exe $(USNMPD) $(LIBS)
+
+usnmptrap: $(USNMPTRAP)
+	$(CC) $(CFLAGS) $(INCLUDE) -o usnmptrap.exe $(USNMPTRAP) $(LIBS)
+
+usnmpget: $(USNMPGET)
+	$(CC) $(CFLAGS) $(INCLUDE) -o usnmpget.exe $(USNMPGET) $(LIBS)
+
+usnmpgetnext: $(USNMPGETNEXT)
+	$(CC) $(CFLAGS) $(INCLUDE) -o usnmpgetnext.exe $(USNMPGETNEXT) $(LIBS)
+
+usnmpset: $(USNMPSET)
+	$(CC) $(CFLAGS) $(INCLUDE) -o usnmpset.exe $(USNMPSET) $(LIBS)
+
+usnmptrapd: $(USNMPTRAPD)
+	$(CC) $(CFLAGS) $(INCLUDE) -o usnmptrapd.exe $(USNMPTRAPD) $(LIBS)
+
+.c.obj:
+	$(CC) $(CFLAGS) $(INCLUDE) -c $<
+
+clean:  
+	$(RM) *.obj *.o *.tds *.map *.exe

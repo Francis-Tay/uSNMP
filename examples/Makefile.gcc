@@ -1,0 +1,44 @@
+#
+# GCC compiler Makefile for uSNMP examples
+#
+
+CC = gcc
+CFLAGS =
+INCLUDE = -I../src
+LIBS =
+RM = rm -f
+AGT_OBJS = ../src/endian.o ../src/misc.o ../src/timer.o ../src/list.o ../src/oid.o ../src/octet.o ../src/mib.o ../src/miblist.o ../src/varbind.o ../src/mibutil.o ../src/SnmpAgent.o
+MGR_OBJS = ../src/endian.o ../src/misc.o ../src/list.o ../src/oid.o ../src/octet.o ../src/mib.o ../src/miblist.o ../src/varbind.o ../src/mibutil.o ../src/SnmpMgr.o
+
+USNMPD = usnmpd.o ../src/keylist.o $(AGT_OBJS)
+USNMPTRAP = usnmptrap.o $(AGT_OBJS)
+USNMPGET = usnmpget.o $(MGR_OBJS)
+USNMPGETNEXT = usnmpgetnext.o $(MGR_OBJS)
+USNMPSET = usnmpset.o $(MGR_OBJS)
+USNMPTRAPD = usnmptrapd.o $(MGR_OBJS)
+
+all: usnmpd usnmptrap usnmpget usnmpgetnext usnmpset usnmptrap usnmptrapd
+
+usnmpd: $(USNMPD)                                        
+	$(CC) $(CFLAGS) $(INCLUDE) -o usnmpd $(USNMPD) $(LIBS)
+
+usnmptrap: $(USNMPTRAP)
+	$(CC) $(CFLAGS) $(INCLUDE) -o usnmptrap $(USNMPTRAP) $(LIBS)
+
+usnmpget: $(USNMPGET)
+	$(CC) $(CFLAGS) $(INCLUDE) -o usnmpget $(USNMPGET) $(LIBS)
+
+usnmpgetnext: $(USNMPGETNEXT)
+	$(CC) $(CFLAGS) $(INCLUDE) -o usnmpgetnext $(USNMPGETNEXT) $(LIBS)
+
+usnmpset: $(USNMPSET)
+	$(CC) $(CFLAGS) $(INCLUDE) -o usnmpset $(USNMPSET) $(LIBS)
+
+usnmptrapd: $(USNMPTRAPD)
+	$(CC) $(CFLAGS) $(INCLUDE) -o usnmptrapd $(USNMPTRAPD) $(LIBS)
+
+.c.o:
+	$(CC) $(CFLAGS) $(INCLUDE) -Wall -c $<
+
+clean:  
+	$(RM) *.obj *.o *.tds *.map *.exe

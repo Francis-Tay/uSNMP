@@ -1,0 +1,16 @@
+ARMADINO-MIB DEFINITIONS ::= BEGIN
+
+	IMPORTS MODULE-IDENTITY, enterprises
+	FROM SNMPv2-SMI;
+
+	armadino MODULE-IDENTITY
+		LAST-UPDATED "201101010000Z"
+		ORGANIZATION "Armadino"
+		CONTACT-INFO "www.armadino.com"
+		DESCRIPTION "Product IDs"
+		::= { enterprises 38644 }
+
+	product OBJECT IDENTIFIER ::= { armadino 1 }
+	custom OBJECT IDENTIFIER ::= { armadino 2 }
+	arduino OBJECT IDENTIFIER ::= { armadino 30 }
+END

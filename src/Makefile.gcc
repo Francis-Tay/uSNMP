@@ -1,0 +1,19 @@
+#
+# GCC compiler Makefile for uSNMP library
+#
+
+CC = gcc
+CFLAGS =
+INCLUDE =      
+LIBS = 
+RM = rm -f
+AGT_OBJS = endian.o misc.o timer.o list.o oid.o octet.o mib.o miblist.o varbind.o mibutil.o SnmpAgent.o
+MGR_OBJS = endian.o misc.o oid.o octet.o mib.o miblist.o varbind.o mibutil.o SnmpMgr.o
+
+all: $(AGT_OBJS) $(MGR_OBJS) keylist.o
+
+.c.o:
+	$(CC) $(CFLAGS) $(INCLUDE) -c $<
+
+clean:  
+	$(RM) *.obj *.o *.tds *.map *.exe
