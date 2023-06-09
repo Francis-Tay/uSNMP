@@ -175,16 +175,16 @@ int compactInt(unsigned char *tlv)
 	return len;
 }
 
-/* Extracts integer value. */ 
+/* Extracts integer (signed), counter, gauge or timetick value. */ 
 uint32_t getValue(unsigned char *vptr, int vlen, unsigned char datatype)
 {
-	int index = 0;
+	int i = 0;
 	uint32_t value;
 
 	if ( (datatype == INTEGER) && (vptr[0] & '\x80') == '\x80' ) value = -1; else value = 0;
-	while (index < vlen) {
+	while (i < vlen) {
 		value <<= 8;
-		value |= vptr[index++];
+		value |= vptr[i++];
 	}
 	return value;
 }
@@ -273,6 +273,7 @@ int vblistAdd(struct messageStruct *vblist, char *oidstr, unsigned char dataType
 			length = str2ber((char *) val, tlv+2);  /* OID length field assumed to be of 1 byte */
 			break;
 		case OCTET_STRING :
+		case IP_ADDRESS :
 			length = vlen;
 			memcopy(tlv+2, (unsigned char *)val, vlen);
 			break;
@@ -332,6 +333,7 @@ int vblistGet(struct messageStruct *vblist, MIB *vb, unsigned char opt)
 					break;
 				case OCTET_STRING :
 				case OBJECT_IDENTIFIER :
+				case IP_ADDRESS :
 					memcopy(vb->u.octetstring, vblist->buffer+tlv.vstart, tlv.len);
 					vb->dataLen = tlv.len;
 					break;
@@ -344,7 +346,7 @@ int vblistGet(struct messageStruct *vblist, MIB *vb, unsigned char opt)
 					break;
 				default :
 					return FAIL;
-			}
+      }
 			vb->access='-'; vb->get = NULL; vb->set = NULL;
 			return ++i;
 		}

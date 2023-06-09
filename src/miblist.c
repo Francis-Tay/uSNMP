@@ -87,7 +87,8 @@ MIB *miblistadd(LIST *miblist, char *oidstr, unsigned char dataType, char access
 		thismib->oid.array[i] = oid.array[i];
 	thismib->get = NULL;
 	thismib->set = NULL;
-	if (dataType == OCTET_STRING || dataType == OBJECT_IDENTIFIER) {
+	if (dataType == OCTET_STRING || dataType == OBJECT_IDENTIFIER ||
+      dataType == IP_ADDRESS) {
 		thismib->u.octetstring = (unsigned char *) data;
 		thismib->dataLen = size;
 	}

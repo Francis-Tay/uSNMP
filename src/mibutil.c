@@ -42,7 +42,7 @@
 /* Prints the MIB data as a keylist string in s. */
 void mibprint(MIB *thismib, char *s)
 {
-	char oidstr[MIB_DATA_SIZE], oidstr2[MIB_DATA_SIZE], str[BUF_SIZE];
+	char oidstr[MIB_DATA_SIZE], str[BUF_SIZE];
 
 	oid2str(&thismib->oid, oidstr);
 	switch(thismib->dataType) {
@@ -50,17 +50,23 @@ void mibprint(MIB *thismib, char *s)
 			sprintf(s, "%s=N,%c,-", oidstr, thismib->access);
 			break;
  		case OBJECT_IDENTIFIER :
-			ber2str(thismib->u.octetstring, thismib->dataLen, oidstr2);
-			sprintf(s, "%s=O,%c,%s", oidstr, thismib->access, oidstr2);
+			ber2str(thismib->u.octetstring, thismib->dataLen, str);
+			sprintf(s, "%s=O,%c,%s", oidstr, thismib->access, str);
 			break;
 		case OCTET_STRING :
 			oct2str(thismib->u.octetstring, thismib->dataLen, str);
 			sprintf(s, "%s=S,%c,%s", oidstr, thismib->access, str);
-			if (octIsprint(thismib->u.octetstring, thismib->dataLen)) {
+			if (octisprint(thismib->u.octetstring, thismib->dataLen)) {
 				memcopy((unsigned char *)str, thismib->u.octetstring, thismib->dataLen);
 				str[thismib->dataLen] = '\0';
 				sprintf(s+strlen(s), " [%s]", str);
 			}
+			break;
+ 		case IP_ADDRESS :
+			oct2str(thismib->u.octetstring, thismib->dataLen, str);
+			sprintf(s, "%s=A,%c,%s", oidstr, thismib->access, str);
+			sprintf(s+strlen(s), " [%u.%u.%u.%u]", thismib->u.octetstring[0], thismib->u.octetstring[1],
+        thismib->u.octetstring[2], thismib->u.octetstring[3]);
 			break;
 		case INTEGER :
 			sprintf(s, "%s=I,%c,%d", oidstr, thismib->access, (int) thismib->u.intval);
@@ -92,12 +98,20 @@ int mibscan(MIB *thismib, char *s)
 		thismib->oid.array[i] = oid.array[i];
 	thismib->access = access;
 	switch(dataType) {
+ 		case 'N' :
+			thismib->dataType = NULL_ITEM;
+			thismib->dataLen = 0;
+			break;
  		case 'O' :
 			thismib->dataType = OBJECT_IDENTIFIER;
 			thismib->dataLen = str2ber(str, thismib->u.octetstring);
 			break;
 		case 'S' :
 			thismib->dataType = OCTET_STRING;
+			thismib->dataLen = str2oct(str, thismib->u.octetstring);
+			break;
+		case 'A' :
+			thismib->dataType = IP_ADDRESS;
 			thismib->dataLen = str2oct(str, thismib->u.octetstring);
 			break;
 		case 'I' :
@@ -141,16 +155,19 @@ int miblistread(LIST *miblist, char *fn)
 				if ((thismib=miblistgooid(miblist, &mib.oid))==NULL) {
 					thismib = malloc(sizeof(MIB));
 					*thismib = mib;
-					if (thismib->dataType==OBJECT_IDENTIFIER || thismib->dataType==OCTET_STRING)
+					if (thismib->dataType==OBJECT_IDENTIFIER || thismib->dataType==OCTET_STRING ||
+              thismib->dataType==IP_ADDRESS) {
 						if (mib.dataLen < MIB_DATA_SIZE)
 							thismib->u.octetstring = malloc(MIB_DATA_SIZE);
 						else
 							thismib->u.octetstring = malloc(mib.dataLen);
-					thismib->get = NULL;
+					}
+          thismib->get = NULL;
 					thismib->set = NULL;
 					miblistput(miblist, thismib);
 				}
-				if (thismib->dataType==OBJECT_IDENTIFIER || thismib->dataType==OCTET_STRING)
+				if (thismib->dataType==OBJECT_IDENTIFIER || thismib->dataType==OCTET_STRING ||
+            thismib->dataType==IP_ADDRESS)
 					memcopy(thismib->u.octetstring, mib.u.octetstring, mib.dataLen);
 				else
 					thismib->u.intval = mib.u.intval;

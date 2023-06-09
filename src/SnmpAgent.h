@@ -68,19 +68,21 @@
 #define SNMPAGENT_H
 
 #ifdef ARDUINO
- #if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega2560__)
-  #define ARDUINO_ETHERNET    // ...assume Ethernet boards
-  #include <SPI.h>
-  #include <Ethernet.h>
-  #include <EthernetUdp.h>
- #else
-  #define ARDUINO_WIFI
-  #ifdef ESP8266
-   #include <ESP8266WiFi.h>
-   #include <WiFiUdp.h>
+  #if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega2560__)
+    #define ARDUINO_ETHERNET    // ...assume Ethernet boards
+    #include <SPI.h>
+    #include <Ethernet.h>
+    #include <EthernetUdp.h>
+  #else
+    #define ARDUINO_WIFI
+    #if defined(ESP8266)
+      #include <ESP8266WiFi.h>
+    #elif defined(ESP32)
+      #include <WiFi.h>
+    // ... add other WIFI boards here
+    #endif
+    #include <WiFiUdp.h>
   #endif
-  // ... add other WIFI boards here
- #endif
 #else
 #include "mibutil.h"
 #include <time.h>

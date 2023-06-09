@@ -35,9 +35,13 @@
 #include <errno.h>
 #include <string.h>
 #ifdef _WIN32
-#include <winsock.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include "wingetopt.h"
 #else
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <unistd.h>
 #endif
 #include "SnmpMgr.h"
@@ -52,7 +56,7 @@ void printHelp( char *prog )
 	printf("         -t Seconds    default time-out is 2 seconds\n");
 	printf("         -d enables debug mode\n");
 	printf("Prefix OID with B:Mgmt-Mib2(1.3.6.1.2.1), E:Experimental(1.3.6.1.3), P:Private(1.3.6.1.4.1)\n");
-	printf("Type is O:OID, S:DisplayString, X:OctetString, I:Integer, T:Timeticks, C:Counter, G:Gauge\n");
+	printf("Type is O:OID, S:DisplayString, X:OctetString, A:IpAddress, I:Integer, T:Timeticks, C:Counter, G:Gauge\n");
 	printf("E.g. %s 192.168.1.252 -c public B.1.6.0 S 18thFloor\n", prog);
 }
 
@@ -108,6 +112,11 @@ int main(int argc, char **argv)
 			case 'x':
 				c = str2oct(argv[++optind], requestBuffer);
 				vblistAdd(&vblist, oid, OCTET_STRING, requestBuffer, c);
+				break;
+			case 'A':
+			case 'a':
+        inet_pton(AF_INET, argv[++optind], (struct in_addr *)requestBuffer);
+				vblistAdd(&vblist, oid, IP_ADDRESS, requestBuffer, 4);
 				break;
 			case 'I':
 			case 'i':

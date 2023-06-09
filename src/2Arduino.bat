@@ -1,7 +1,9 @@
 md ..\Arduino
 md ..\Arduino\SnmpAgent
 md ..\Arduino\SnmpAgent\examples
-md ..\Arduino\SnmpAgent\examples\usnmpd
+md ..\Arduino\SnmpAgent\examples\usnmpd_atmega
+md ..\Arduino\SnmpAgent\examples\usnmpd_esp32
+md ..\Arduino\SnmpAgent\examples\usnmpd_esp8266
 copy mib.c ..\Arduino\SnmpAgent
 copy mib.h ..\Arduino\SnmpAgent
 copy list.c ..\Arduino\SnmpAgent
@@ -21,4 +23,7 @@ copy snmpdefs.h ..\Arduino\SnmpAgent
 copy usnmp.h ..\Arduino\SnmpAgent
 copy SnmpAgent.h ..\Arduino\SnmpAgent
 copy SnmpAgent.c ..\Arduino\SnmpAgent\SnmpAgent.cpp
-copy ..\examples\usnmpd.ino ..\Arduino\SnmpAgent\examples\usnmpd
+copy ..\examples\usnmpd_atmega.ino ..\Arduino\SnmpAgent\examples\usnmpd_atmega
+copy ..\examples\usnmpd_esp32.ino ..\Arduino\SnmpAgent\examples\usnmpd_esp32
+copy ..\examples\usnmpd_esp8266.ino ..\Arduino\SnmpAgent\examples\usnmpd_esp8266
+

@@ -39,6 +39,7 @@ void mibsetvalue(MIB *thismib, void *u, int size)
 	switch(thismib->dataType) {
 		case OCTET_STRING :
  		case OBJECT_IDENTIFIER :
+ 		case IP_ADDRESS :
 			memcopy(thismib->u.octetstring, (unsigned char *) u, size);
 			thismib->dataLen = size;
 			break;

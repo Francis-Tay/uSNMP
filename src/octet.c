@@ -83,7 +83,7 @@ int oct2str(unsigned char *oct, int len, char *str)
 }
 
 /* Test if the octet string is printable; return 1 if yes, 0 if not. */
-int octIsprint(unsigned char *oct, int len)
+int octisprint(unsigned char *oct, int len)
 {
 	int i;
 	for (i=0; i<len; i++)

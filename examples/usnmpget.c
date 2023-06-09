@@ -35,7 +35,7 @@
 #include <errno.h>
 #include <string.h>
 #ifdef _WIN32
-#include <winsock.h>
+#include <winsock2.h>
 #include "wingetopt.h"
 #else
 #include <unistd.h>

@@ -35,16 +35,14 @@
 #include <errno.h>
 #include <string.h>
 #ifdef _WIN32
-#include <winsock.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include "wingetopt.h"
 #else
-#include <unistd.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
 #include <arpa/inet.h>
-#include <sys/ioctl.h>
-#include <net/if.h>
-#include <netdb.h>
-#include <sys/un.h>
+#include <unistd.h>
 #endif
 #include "SnmpMgr.h"
 
@@ -61,7 +59,7 @@ int main(int argc, char **argv)
 	int c, port = TRAP_DST_PORT, snmpfd;
 	unsigned int gen, spec, remotePort, timestamp;
 	OID entoid;
-	char agentaddr[32], remoteIpAddr[32], oid[64];
+	char agentaddr[16], remoteIpAddr[16], oid[64];
 #ifdef _WIN32
 	int fromlen;
 #else
@@ -89,7 +87,7 @@ int main(int argc, char **argv)
 	while ( (response.len = recvfrom(snmpfd, response.buffer, RESPONSE_BUFFER_SIZE,
 		0, &from, &fromlen)) ) {
 		if (debug) {
-			strcpy( remoteIpAddr, inet_ntoa(((struct sockaddr_in *)&from)->sin_addr));
+			inet_ntop(AF_INET, &(((struct sockaddr_in *)&from)->sin_addr), remoteIpAddr, 16);
 			remotePort = ntohs(((struct sockaddr_in *)&from)->sin_port);
 			if (debug) printf("Receive trap from %s, port %u\n",
 				remoteIpAddr, remotePort);

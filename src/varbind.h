@@ -98,7 +98,7 @@ int insertRespLen(struct messageStruct *request, int reqStart, struct messageStr
 /* Compacts BER-encoded integer and returns the compacted size. */ 
 int compactInt(unsigned char *tlv);
 
-/* Extracts integer value. */ 
+/* Extracts integer (signed), counter, gauge or timetick value. */ 
 uint32_t getValue(unsigned char *vptr, int vlen, unsigned char datatype);
 
 /* Extracts a TLV from msg starting at index. Return Success(0) or error code (<0). */ 

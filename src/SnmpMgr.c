@@ -67,15 +67,14 @@
 #include <string.h>
 #include <errno.h>
 #ifdef _WIN32
-#include <winsock.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #else
-#include <unistd.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
 #include <arpa/inet.h>
-#include <sys/ioctl.h>
-#include <net/if.h>
 #include <netdb.h>
-#include <sys/un.h>
+#include <unistd.h>
 #endif
 
 #include "SnmpMgr.h"
@@ -128,7 +127,7 @@ int initSnmpMgr( int port )
 	response.buffer = responseBuffer; response.size = RESPONSE_BUFFER_SIZE;
 	vblist.buffer = vbBuffer; vblist.size = VB_BUFFER_SIZE;
 	vblistReset(&vblist);
-	gethostaddr( NULL, &servaddr ); strcpy( hostIpAddr, inet_ntoa(servaddr.sin_addr) );
+  gethostaddr( NULL, &servaddr ); inet_ntop(AF_INET, &(servaddr.sin_addr), hostIpAddr, 16);
 	if (debug)
 #ifdef _WIN32
 		printf ("Local Windows system host address is %s\n", hostIpAddr);
@@ -247,7 +246,7 @@ int reqSend(struct messageStruct *req, struct messageStruct *resp,
 		to.sin_port = htons(port_no);
 		if (debug) {
 			getsockname(snmpfd, &from, &fromlen);
-			strcpy(dstAddr, inet_ntoa(to.sin_addr));
+      inet_ntop(AF_INET, &(to.sin_addr), dstAddr, 16);
 			printf("Send request to %s from port %u:", dstAddr, ntohs(((struct sockaddr_in *)&from)->sin_port));
 			showMessage(req);
 		}
